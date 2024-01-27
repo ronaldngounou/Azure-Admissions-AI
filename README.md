@@ -1,5 +1,5 @@
 #Introduction:
-The objective of this project is to create a chatbot using LangChain on Microsoft Azure. Key Microsoft Azure services utilized include Azure Web App, Blob Storage, Cognitive Search, Vector Database, and Container Registry. The final product is a website allowing users to interact with a database, all deployed on Azure. The report includes a code walkthrough and deployment steps.
+The objective of this project is to create a chatbot using LangChain on Microsoft Azure for Stony Brook University Admissions. Key Microsoft Azure services utilized include Azure Web App, Blob Storage, Cognitive Search, Vector Database, and Container Registry. The final product is a website allowing users to interact with a database, all deployed on Azure. The report includes a code walkthrough and deployment steps.
 
 #Azure Overview:
 Microsoft Azure is a cloud computing platform offering services like infrastructure as a service (IaaS), platform as a service (PaaS), and software as a service (SaaS). Azure facilitates application management and deployment across Microsoft’s global data center network. An Azure subscription is an agreement with Microsoft for using its cloud platforms or services, billed monthly or pay-as-you-go. Azure organizes services in resource groups, which are containers holding related resources for an Azure solution.
@@ -29,5 +29,5 @@ A new Azure Container Registry is created. Then building and pushing the Docker 
 The final step involves deploying the Docker image to an Azure Web Service, and creating a web app with the deployed image. The process includes configuring environment variables and ensuring the correct startup commands are set.
 
 #Conclusion:
-We have successfully demonstrated the deployed chatbot and showed its interaction with the Vector store. The presenter encourages questions in the comments and invites viewers to subscribe to the channel.
+We have successfully demonstrated the deployed chatbot called Wolfiebot and showed its interaction with the Vector store. The presenter encourages questions in the comments and invites viewers to subscribe to the channel.
 
