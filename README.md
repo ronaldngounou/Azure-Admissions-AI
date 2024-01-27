@@ -31,7 +31,3 @@ The final step involves deploying the Docker image to an Azure Web Service, and 
 #Conclusion:
 We have successfully demonstrated the deployed chatbot and showed its interaction with the Vector store. The presenter encourages questions in the comments and invites viewers to subscribe to the channel.
 
-#Additional Notes:
-The tutorial is detailed, catering to viewers with intermediate knowledge of Azure and Python.
-The presenter emphasizes careful resource and service management to optimize costs and security.
-The deployment process highlights the integration of various Azure services to create a functional chatbot application.
