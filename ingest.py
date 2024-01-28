@@ -1,3 +1,4 @@
+import shutil
 import requests
 import os
 import hashlib
@@ -12,9 +13,6 @@ import re
 sys.stdout.reconfigure(encoding='utf-8')
 
 # Define a simple extractor function using BeautifulSoup
-#def simple_extractor(html: str) -> str:
-#    soup = BeautifulSoup(html, "html.parser") #lxml
-#    return re.sub(r"\n\n+", "\n", soup.text).strip()
 def simple_extractor(html: str) -> str:
     soup = BeautifulSoup(html, "html.parser")
     
@@ -78,6 +76,7 @@ def load_college_admission_docs():
                                               headers = headers, 
                                               use_async=True, 
                                               timeout=500,
+                                               # Drop trailing / to avoid duplicate pages.
                                               link_regex=(
                                                 f"href=[\"']{PREFIXES_TO_IGNORE_REGEX}((?:{SUFFIXES_TO_IGNORE_REGEX}.)*?)"
                                                 r"(?:[\#'\"]|\/[\#'\"])"
@@ -92,11 +91,17 @@ def load_college_admission_docs():
         combined_docs.append(doc.text if hasattr(doc, 'text') else str(doc))
 
     # Write to a text file
-    with open('scraped_data.txt', 'w', encoding='utf-8') as file:
-        for doc in combined_docs:
-            file.write(doc + "\n")
+    write_to_text_file('scraped_data.txt', combined_docs)
 
     return combined_docs
+
+def write_to_text_file(filename, combined_docs):
+    with open(filename, 'w', encoding='utf-8') as file:
+        for doc in combined_docs:
+            file.write(doc + "\n")
+    
+    return filename
+
 
 def remove_trailing_characters(input_file_path, output_file_path):
     with open(input_file_path, 'r', encoding='utf-8') as file:
@@ -106,25 +111,31 @@ def remove_trailing_characters(input_file_path, output_file_path):
     # This will remove occurrences of multiple \n and \t
     content = content.replace('\\n', ' ').replace('\\', '')
 
-        # Replace multiple spaces with a single space using regex
+    # Replace multiple spaces with a single space using regex
     content = re.sub(r'\s+', ' ', content)
 
     with open(output_file_path, 'w', encoding='utf-8') as file:
         file.write(content)
 
-def generate_hash(content):
-    return hashlib.sha256(str(content).encode()).hexdigest()
+def compute_hash(file_path):
+    """Compute the SHA-256 hash of a file."""
+    hasher = hashlib.sha256()
+    with open(file_path, 'rb') as file:
+        buf = file.read()
+        hasher.update(buf)
+    return hasher.hexdigest()
 
-def has_website_changed(new_data, filename):
-    try:
-        with open(filename, 'r', encoding='utf-8') as file:
-            old_data = file.read()
-            old_hash = generate_hash(old_data)
-            new_hash = generate_hash(new_data)
-            return old_hash != new_hash
-    except FileNotFoundError:
-        # File not found, so it's the first run
-        return True
+def replace_file(old_file, new_file):
+    """Replace the old file with the new file if they are different."""
+    old_hash = compute_hash(old_file)
+    new_hash = compute_hash(new_file)
+
+    if old_hash != new_hash:
+        shutil.copy2(new_file, old_file)
+        print(f"The file '{old_file}' has been updated.")
+    else:
+        print("No changes detected. The file remains the same.")
+
 
 # Call the function
 load_college_admission_docs()
@@ -137,27 +148,33 @@ def read_old_content(file_path):
             return file.read()
     return None
 
+def replace_file(old_file, new_file):
+    """Replace the old file with the new file if they are different."""
+    old_hash = compute_hash(old_file)
+    new_hash = compute_hash(new_file)
+
+    if old_hash != new_hash:
+        shutil.copy2(new_file, old_file)
+        print(f"The file '{old_file}' has been updated.")
+    else:
+        print("No changes detected. The file remains the same.")
+
+
 def write_content_to_file(content, file_path):
     with open(file_path, 'w', encoding = 'utf-8') as file:
         file.write(str(content))
 
 def main():
     #website_url = 'http://example.com'
-    file_path = 'scraped_data.txt'
+    old_file_path = 'scraped_data.txt'
 
     # Assuming load_college_admission_docs() scrapes and returns website content
-    current_content = load_college_admission_docs()  # Ensure this function is defined
-    old_content = read_old_content(file_path)
+    new_content = load_college_admission_docs()  # Ensure this function is defined
+    
+    new_file_path = write_to_text_file("scraped_data_new.txt", new_content)
 
     # If old content exists, compare hashes
-    if old_content and generate_hash(current_content) != generate_hash(old_content):
-        print("Website has changed. Updating content.")
-        write_content_to_file(current_content, file_path)
-    elif not old_content:
-        print("Initial run: Saving current content.")
-        write_content_to_file(current_content, file_path)
-    else:
-        print("No changes detected in the website.")
+    replace_file(old_file_path, new_file_path)
     
     remove_trailing_characters('scraped_data.txt', 'processed_data.txt')
 
