@@ -7,8 +7,8 @@ from bs4 import BeautifulSoup
 from langchain.document_loaders import RecursiveUrlLoader
 from langchain.utils.html import (PREFIXES_TO_IGNORE_REGEX,
                                   SUFFIXES_TO_IGNORE_REGEX)
-from hackathonAI.blob import upload_directory_to_blob
-from hackathonAI.azurecognitive_search import update_cognitive_search
+#from hackathonAI.blob import upload_directory_to_blob
+#from hackathonAI.azurecognitive_search import update_cognitive_search
 
 import sys
 import re 
@@ -167,17 +167,17 @@ def write_content_to_file(content, file_path):
         file.write(str(content))
 
 def main():
-    old_file_path = './hackathonAI/Data/scraped_data.txt'
+    old_file_path = './scraped_data.txt'
 
     # Assuming load_college_admission_docs() scrapes and returns website content
     new_content = load_college_admission_docs()  # Ensure this function is defined
     
-    new_file_path = write_to_text_file("./hackathonAI/Data/scraped_data_new.txt", new_content)
+    new_file_path = write_to_text_file("./scraped_data_new.txt", new_content)
 
     # If old content exists, compare hashes
     if replace_file(old_file_path, new_file_path):
-        remove_trailing_characters('./hackathonAI/Data/scraped_data_new.txt', 'processed_data.txt')
-        upload_directory_to_blob('./hackathonAI/Data/')
+        remove_trailing_characters('./scraped_data_new.txt', 'processed_data.txt')
+        upload_directory_to_blob('Data')
         update_cognitive_search()
     
 
