@@ -43,7 +43,7 @@ def simple_extractor(html: str) -> str:
 
 def load_college_admission_docs():
     # URLs
-    #niche_url = "https://www.niche.com/colleges/stony-brook-university-suny/"
+    stonybrook_costs_and_aid_url = "https://www.stonybrook.edu/undergraduate-admissions/cost-and-aid/"
     stonybrook_url = "https://www.stonybrook.edu/undergraduate-admissions/apply/first-year.php"
     international_students_url = "https://www.stonybrook.edu/undergraduate-admissions/apply/international.php"
     stonebrook_campuslife_url = "https://www.stonybrook.edu/campus-life/"
@@ -53,18 +53,18 @@ def load_college_admission_docs():
     }
     
     # Load documents
-    #docs_from_niche = RecursiveUrlLoader(url=niche_url, 
-    #                                     max_depth=500, 
-    #                                     extractor=simple_extractor, 
-    #                                     prevent_outside=True, 
-    #                                     use_async=True, 
-    #                                     headers = headers,
-    #                                     link_regex=(
-    #                                            f"href=[\"']{PREFIXES_TO_IGNORE_REGEX}((?:{SUFFIXES_TO_IGNORE_REGEX}.)*?)"
-    #                                            r"(?:[\#'\"]|\/[\#'\"])"
-    #                                            ),
-    #                                            check_response_status=True,
-    #                                     timeout=600).load()
+    docs_from_stonybrook_costs_and_aid = RecursiveUrlLoader(url=stonybrook_costs_and_aid_url, 
+                                         max_depth=500, 
+                                         extractor=simple_extractor, 
+                                         prevent_outside=True, 
+                                         use_async=True, 
+                                         headers = headers,
+                                         link_regex=(
+                                                f"href=[\"']{PREFIXES_TO_IGNORE_REGEX}((?:{SUFFIXES_TO_IGNORE_REGEX}.)*?)"
+                                                r"(?:[\#'\"]|\/[\#'\"])"
+                                                ),
+                                                check_response_status=True,
+                                         timeout=600).load()
     
     docs_from_stonybrook = RecursiveUrlLoader(url=stonybrook_url,   
                                              max_depth=10000000, 
@@ -107,7 +107,7 @@ def load_college_admission_docs():
 
     # Combine documents
     combined_docs = []
-    for doc in docs_from_stonybrook + docs_from_international_students_stonybrook + docs_from_stonybrook_campuslife: #docs_from_niche
+    for doc in docs_from_stonybrook + docs_from_stonybrook_costs_and_aid + docs_from_international_students_stonybrook + docs_from_stonybrook_campuslife: #docs_from_niche
         # Assuming 'doc' has a 'text' attribute containing the string representation
         combined_docs.append(doc.text if hasattr(doc, 'text') else str(doc))
 
